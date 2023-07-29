@@ -4,6 +4,7 @@ services:
   namenode:
     image: bde2020/hadoop-namenode:2.0.0-hadoop3.2.1-java8
     container_name: namenode
+    hostname: namenode
     restart: always
     ports:
       - 9870:9870
@@ -18,14 +19,17 @@ services:
   datanode:
     image: bde2020/hadoop-datanode:2.0.0-hadoop3.2.1-java8
     container_name: datanode
+    hostname: datanode
     restart: always
+    ports:
+      - 9864:9864
+      - 9866:9866
     volumes:
       - hadoop_datanode:/hadoop/dfs/data
     environment:
       SERVICE_PRECONDITION: "namenode:9870"
     env_file:
       - ./hadoop-hive-combined.env
-
   resourcemanager:
     image: bde2020/hadoop-resourcemanager:2.0.0-hadoop3.2.1-java8
     container_name: resourcemanager
@@ -34,8 +38,7 @@ services:
       SERVICE_PRECONDITION: "namenode:9000 namenode:9870 datanode:9864"
     env_file:
       - ./hadoop-hive-combined.env
-
-  nodemanager1:
+  nodemanager:
     image: bde2020/hadoop-nodemanager:2.0.0-hadoop3.2.1-java8
     container_name: nodemanager
     restart: always
@@ -55,6 +58,7 @@ services:
     env_file:
       - ./hadoop-hive-combined.env
   hive-server:
+    container_name: hive-server
     image: bde2020/hive:2.3.2-postgresql-metastore
     env_file:
       - ./hadoop-hive-combined.env
@@ -64,6 +68,7 @@ services:
     ports:
       - "10000:10000"
   hive-metastore:
+    container_name: hive-metastore
     image: bde2020/hive:2.3.2-postgresql-metastore
     env_file:
       - ./hadoop-hive-combined.env
@@ -73,7 +78,16 @@ services:
     ports:
       - "9083:9083"
   hive-metastore-postgresql:
+    container_name: hive-metastore-postgresql
     image: bde2020/hive-metastore-postgresql:3.1.0
+
+  camel-integration:
+    container_name: camel-integration
+    image: camel-integration
+    environment:
+      LOG_PATH: "file:/log_location/"
+      HDFS_PATH: "hdfs://namenode:9000/data/?replication=1"
+      SERVICE_PRECONDITION: "namenode:9870"
 
 volumes:
   hadoop_namenode:
