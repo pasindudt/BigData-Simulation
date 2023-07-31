@@ -16,7 +16,7 @@ public class LogFileProcessor implements Processor {
             String line;
             while ((line = reader.readLine()) != null) {
                 // exchange.getIn().setHeader("CamelFileName", fileName);
-                exchange.getIn().setBody(line);
+                exchange.getIn().setBody(line + "\n");
 
                 exchange.getContext().createProducerTemplate()
                         .send("direct:contentBasedRouter", exchange);

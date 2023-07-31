@@ -8,14 +8,14 @@ public class LogFileAggregationStrategy implements AggregationStrategy {
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {
-            StringBuilder buffer = new StringBuilder();
-            buffer.append(newExchange.getIn().getBody(String.class));
-            newExchange.getIn().setBody(buffer);
             return newExchange;
-        } else {
-            StringBuilder buffer = oldExchange.getIn().getBody(StringBuilder.class);
-            buffer.append(newExchange.getIn().getBody(String.class));
-            return oldExchange;
         }
+        String body = oldExchange.getIn().getBody(String.class) + "\n"
+                + newExchange.getIn().getBody(String.class);
+        oldExchange.getIn().setBody(body);
+        if (body.length() >= 1000) {
+            oldExchange.setProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, true);
+        }
+        return oldExchange;
     }
 }

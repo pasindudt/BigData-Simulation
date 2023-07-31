@@ -31,7 +31,7 @@ public class DataToHdfsRoute extends RouteBuilder {
                                 .aggregate(constant(true), new LogFileAggregationStrategy())
                                 .log("aggregration")
                                 .completionSize(100000) // Set the desired data size (in bytes) for aggregation
-                                .completionTimeout(5000) // Set a timeout for aggregation (optional)
+//                                .completionTimeout(5000) // Set a timeout for aggregation (optional)
                                 .process(new HDFSFileProcessor())
                                 .log("Uploaded to HDFS");
 
