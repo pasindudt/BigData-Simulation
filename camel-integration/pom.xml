@@ -54,6 +54,12 @@
             <artifactId>camel-hdfs</artifactId>
             <version>${camel.version}</version>
         </dependency>
+        <!-- Camel Kafka component -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-kafka</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
     </dependencies>
 
 
