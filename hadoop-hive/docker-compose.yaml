@@ -88,8 +88,9 @@ services:
       - namenode
     environment:
       LOG_PATH: "file:/log_location/"
-      HDFS_PATH: "hdfs://namenode:9000/data/?replication=1"
-      HDFS_KAFKA_PATH: "hdfs://namenode:9000/kafka/kafkadata?replication=1"
+      HDFS_OPTIONS: "?replication=1"
+      HDFS_PATH: "hdfs://namenode:9000/data/"
+      HDFS_KAFKA_PATH: "hdfs://namenode:9000/kafka/"
       KAFKA_PATH: "kafka:test_topic?brokers=host.docker.internal:29092"
       SERVICE_PRECONDITION: "namenode:9870"
 
