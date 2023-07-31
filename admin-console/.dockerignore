@@ -1,0 +1,20 @@
+# Ignore editor-specific files
+.idea/
+
+# Ignore Python cache and log files
+admin-api/__pycache__/
+admin-api/*.pyc
+admin-api/*.log
+
+# Ignore Node.js dependencies
+admin-frontend/node_modules/
+admin-frontend/build/
+
+# Ignore other temporary files
+*.log
+*.tmp
+*.swp
+
+# Ignore version control files
+.git/
+.gitignore

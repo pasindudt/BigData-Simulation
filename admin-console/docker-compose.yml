@@ -1,0 +1,12 @@
+version: '3'
+services:
+  admin-api:
+    build:
+      context: ../admin-console/admin-api
+    ports:
+      - "5000:5000"
+  admin-frontend:
+    build:
+      context: admin-frontend
+    ports:
+      - "3000:3000"
