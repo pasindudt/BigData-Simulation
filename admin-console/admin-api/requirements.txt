@@ -1,2 +1,4 @@
 confluent-kafka
 flask
+flask-cors
+hdfs

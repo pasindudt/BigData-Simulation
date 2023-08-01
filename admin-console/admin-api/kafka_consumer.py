@@ -1,8 +1,12 @@
 from confluent_kafka import Consumer, KafkaError
+from hdfs import InsecureClient
 
-# Replace with your Kafka broker(s) host and port
-bootstrap_servers = 'localhost:29092'
-group_id = 'my-consumer-group'  # Replace with a unique consumer group ID
+bootstrap_servers = 'localhost:9092'
+group_id = 'my-consumer-group'
+
+hdfs_host = 'http://localhost:9870'  # Replace with your HDFS Namenode address
+hdfs_user = 'hadoop'  # Replace with your Hadoop user
+hdfs_client = InsecureClient(hdfs_host, user=hdfs_user)
 
 def consume_from_topic(topic_name):
     consumer = Consumer({
@@ -25,10 +29,13 @@ def consume_from_topic(topic_name):
                 else:
                     print(f'Error while consuming message: {message.error()}')
             else:
-                print(f'Received message: {message.value().decode("utf-8")}')
+                # Save the received message to HDFS
+                message_value = message.value().decode('utf-8')
+                hdfs_client.write(f'/path/to/hdfs/folder/{topic_name}', data=message_value, overwrite=False)
+                print(f'Received message: {message_value}')
     except KeyboardInterrupt:
         consumer.close()
 
 if __name__ == '__main__':
-    topic_name = 'your-topic-name'  # Replace with the Kafka topic you want to consume from
+    topic_name = 'test'
     consume_from_topic(topic_name)
