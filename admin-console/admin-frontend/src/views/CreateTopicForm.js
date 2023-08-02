@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import axios from 'axios';
+import SuccessModal from "../components/SuccessModal";
+import ErrorModal from "../components/ErrorModal";
+import Loader from "../components/Loader";
 
-const CreateTopicForm = ({ apiUrl }) => {
+const CreateTopicForm = ({apiUrl}) => {
+    const [loading, setLoading] = useState(false);
     const [topicName, setTopicName] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-
-    console.log('inside create topic')
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
 
     const handleCreateTopic = async (e) => {
         e.preventDefault();
@@ -16,11 +20,7 @@ const CreateTopicForm = ({ apiUrl }) => {
         }
 
         try {
-            const response = await axios.post(`${apiUrl}/kafka/topics`, {
-                topicName: topicName,
-                numPartitions: 1, // Update with the desired number of partitions
-                replicationFactor: 1, // Update with the desired replication factor
-            });
+            const response = await axios.post(`${apiUrl}/kafka/topics?topicName=${topicName}&numPartitions=${1}&replicationFactor=${1}`);
             setSuccessMessage(`Topic "${topicName}" created successfully.`);
             setErrorMessage('');
             setTopicName('');
@@ -32,15 +32,17 @@ const CreateTopicForm = ({ apiUrl }) => {
         }
     };
 
-    const hideMessages = () => {
-        setSuccessMessage('');
-        setErrorMessage('');
+    const closeModal = () => {
+        setShowSuccessModal(false);
+        setShowErrorModal(false);
     };
 
     return (
         <div className="container mt-4">
             <h2 className="mb-3">Create Kafka Topic</h2>
-            <form onSubmit={handleCreateTopic}>
+            <SuccessModal showModal={showSuccessModal} onClose={closeModal}/>
+            <ErrorModal showModal={showErrorModal} onClose={closeModal}/>
+            {!loading && <form onSubmit={handleCreateTopic}>
                 <div className="input-group mb-3">
                     <input
                         type="text"
@@ -51,17 +53,8 @@ const CreateTopicForm = ({ apiUrl }) => {
                     />
                     <button type="submit" className="btn btn-primary">Create Topic</button>
                 </div>
-                {successMessage && (
-                    <div className="alert alert-success mt-3" onClick={hideMessages}>
-                        {successMessage}
-                    </div>
-                )}
-                {errorMessage && (
-                    <div className="alert alert-danger mt-3" onClick={hideMessages}>
-                        {errorMessage}
-                    </div>
-                )}
-            </form>
+            </form>}
+            {loading && <Loader/>}
         </div>
     );
 };
