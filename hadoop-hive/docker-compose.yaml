@@ -115,15 +115,58 @@ services:
     image: camel-integration
     depends_on:
       - namenode
+    volumes:
+      - camel_file_location:/log_location/
+    ports:
+      - "18787:8788"
     environment:
+      JAVA_TOOL_OPTIONS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:8788
       LOG_PATH: "file:/log_location/"
       HDFS_OPTIONS: "?replication=1&append=true"
       HDFS_PATH: "hdfs://namenode:9000/data/"
-      HDFS_KAFKA_PATH: "hdfs://namenode:9000/kafka/"
-      KAFKA_PATH: "kafka:test_topic?brokers=host.docker.internal:29092"
+      HDFS_COMPLETION_SIZE: 10000
+      KAFKA_USER_TOPIC_URL: "kafka:user?brokers=host.docker.internal:29092"
+      HDFS_USER_URL: "hdfs://namenode:9000/data/"
+      HDFS_USER_OPTIONS: "?replication=1&append=true"
+      KAFKA_MOVIE_TOPIC_URL: "kafka:movie?brokers=host.docker.internal:29092"
+      HDFS_MOVIE_URL: "hdfs://namenode:9000/data/"
+      HDFS_MOVIE_OPTIONS: "?replication=1&append=true"
+      KAFKA_CATEGORY_TOPIC_URL: "kafka:category?brokers=host.docker.internal:29092"
+      HDFS_CATEGORY_URL: "hdfs://namenode:9000/data/"
+      HDFS_CATEGORY_OPTIONS: "?replication=1&append=true"
       SERVICE_PRECONDITION: "namenode:9870"
+
+  test-data-gen:
+    container_name: test-data-generator
+    image: test-data-generator
+    volumes:
+      - camel_file_location:/logs/
+    ports:
+      - "8787:8787"
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 22181:2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 volumes:
   hadoop_namenode:
   hadoop_datanode:
   hadoop_historyserver:
+  camel_file_location:

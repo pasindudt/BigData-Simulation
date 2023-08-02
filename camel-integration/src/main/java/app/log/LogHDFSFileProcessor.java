@@ -1,38 +1,39 @@
-package app;
+package app.log;
 
-import static app.Constants.hdfsPath;
+import static app.log.Constants.HDFS_PATH;
+import static app.log.Constants.HDFS_OPTIONS;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static app.Constants.hdfsOptions;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-public class HDFSFileProcessor implements Processor {
+public class LogHDFSFileProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        String hdfsFileName = hdfsPath + "logs" + hdfsOptions;
+        String hdfsFileName = HDFS_PATH + "logs" + HDFS_OPTIONS;
         String content = exchange.getIn().getBody(String.class);
-        LogData logData = extractData(content);
-        String processedContent = new StringBuilder()
-                                .append(logData.user)
-                                .append(',')
-                                .append(logData.action)
-                                .append(',')
-                                .append(logData.movie)
-                                .append(',')
-                                .append(logData.category)
-                                .append('\n')
-                                .toString();
+        for (String line: content.split("\n")) {
+            LogData logData = extractData(line);
+            String processedContent = new StringBuilder()
+                    .append(logData.user)
+                    .append(',')
+                    .append(logData.action)
+                    .append(',')
+                    .append(logData.movie)
+                    .append(',')
+                    .append(logData.category)
+                    .append('\n')
+                    .toString();
 
-        exchange.getContext().createProducerTemplate().sendBodyAndHeader(
-                hdfsFileName, processedContent, "CamelHdfsAppend", true);
+            exchange.getContext().createProducerTemplate().sendBodyAndHeader(
+                    hdfsFileName, processedContent, "CamelHdfsAppend", true);
+        }
     }
 
     public static LogData extractData(String logMessage) {
@@ -58,7 +59,6 @@ public class HDFSFileProcessor implements Processor {
         actionMap.put("start", "started watching");
         actionMap.put("pause", "paused watching");
         actionMap.put("resume", "resumed watching");
-        actionMap.put("rate", "rated the");
 
         for (Map.Entry<String, String> entry : actionMap.entrySet()) {
             if (logMessage.contains(entry.getValue())) {
