@@ -1,17 +1,18 @@
-package app;
+package app.log;
 
 import org.apache.camel.builder.RouteBuilder;
 
-import static app.Constants.logPath;
+import static app.log.Constants.HDFS_COMPLETION_SIZE;
+import static app.log.Constants.LOG_PATH;
 
-public class DataToHdfsRoute extends RouteBuilder {
+public class LogDataToHdfsRoute extends RouteBuilder {
 
         @Override
         public void configure() {
 
-                log.info("Configuration started.....");
+                log.info("Log Routes Started.....");
 
-                from(logPath)
+                from(LOG_PATH)
                                 .log("Picked from input dir")
                                 .process(new LogFileProcessor())
                                 .log("Processed");
@@ -30,14 +31,9 @@ public class DataToHdfsRoute extends RouteBuilder {
                                 .log("picked up from output dir")
                                 .aggregate(constant(true), new LogFileAggregationStrategy())
                                 .log("aggregration")
-                                .completionSize(100000) // Set the desired data size (in bytes) for aggregation
-//                                .completionTimeout(5000) // Set a timeout for aggregation (optional)
-                                .process(new HDFSFileProcessor())
+                                .completionSize(HDFS_COMPLETION_SIZE)
+//                                .completionTimeout(5000)
+                                .process(new LogHDFSFileProcessor())
                                 .log("Uploaded to HDFS");
-
-                // from(kafkaPath)
-                // .log("Message received from Kafka : ${body}")
-                // .to(hdfsKafkaPath)
-                // .log("kafka uploaded to hdfs");
         }
 }

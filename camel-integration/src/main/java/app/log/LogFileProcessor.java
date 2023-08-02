@@ -1,4 +1,4 @@
-package app;
+package app.log;
 
 import java.io.BufferedReader;
 import java.io.InputStream;

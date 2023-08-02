@@ -1,5 +1,7 @@
 package app;
 
+import app.kafka.KafkaDataToHdfsRoute;
+import app.log.LogDataToHdfsRoute;
 import io.quarkus.runtime.Quarkus;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import org.apache.camel.CamelContext;
@@ -16,8 +18,9 @@ public class Main {
 
       try (CamelContext camelContext = new DefaultCamelContext();){
 
-         // Add the route to the context
-         camelContext.addRoutes(new DataToHdfsRoute());
+         // Add the routes to the context
+         camelContext.addRoutes(new LogDataToHdfsRoute());
+         camelContext.addRoutes(new KafkaDataToHdfsRoute());
 
          // Start the Camel context
          camelContext.start();
@@ -26,7 +29,7 @@ public class Main {
          Quarkus.run(args);
 
       } catch (Exception e) {
-         log.error("Error occured while applcation start", e);
+         log.error("Error occurred while application start", e);
       }
 
    }

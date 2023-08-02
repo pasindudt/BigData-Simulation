@@ -1,4 +1,4 @@
-package app;
+package app.log;
 
 import org.apache.camel.AggregationStrategy;
 import org.apache.camel.Exchange;
