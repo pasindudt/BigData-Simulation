@@ -1,0 +1,176 @@
+{
+	"info": {
+		"_postman_id": "ad42c8a8-2d08-4b60-9e39-f2cf60c1b810",
+		"name": "BigData Simulation",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21653330"
+	},
+	"item": [
+		{
+			"name": "Create_Kafka_Topics",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/data-load/kafka/create_init_topics",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"data-load",
+						"kafka",
+						"create_init_topics"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "init-kakfa_load",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/init-data-load/kafka",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"init-data-load",
+						"kafka"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "init-log-load",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/init-data-load/log",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"init-data-load",
+						"log"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "init-mongo-load",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/init-data-load/mongo",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"init-data-load",
+						"mongo"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "publish-message-kafka",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"action\": \"create\",\r\n  \"entity\": \"user\",\r\n  \"data\": {\r\n    \"user_id\": \"generated_user_id\",\r\n    \"username\": \"generated_username\",\r\n    \"email\": \"generated_username@example.com\"\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8787/data-load/kafka/publish_message?topic=user",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"data-load",
+						"kafka",
+						"publish_message"
+					],
+					"query": [
+						{
+							"key": "topic",
+							"value": "user"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "custom-log-load",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/data-load/log?row_count=1000&info_probability=0.5",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"data-load",
+						"log"
+					],
+					"query": [
+						{
+							"key": "row_count",
+							"value": "1000"
+						},
+						{
+							"key": "info_probability",
+							"value": "0.5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "custom-mongo-load",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "localhost:8787/data-load/mongo?review_count=100",
+					"host": [
+						"localhost"
+					],
+					"port": "8787",
+					"path": [
+						"data-load",
+						"mongo"
+					],
+					"query": [
+						{
+							"key": "review_count",
+							"value": "100"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
