@@ -8,12 +8,13 @@ import com.google.gson.Gson;
 import static app.kafka.Constants.HDFS_USER_OPTIONS;
 import static app.kafka.Constants.HDFS_USER_URL;
 import static app.util.TextProcessor.sanitizeStringWithReplace;
+import static app.util.TextProcessor.sanitizeJSONString;
 
 public class KafkaUserMessageProcessor implements Processor {
    @Override
    public void process(Exchange exchange){
 
-      String messageJson = exchange.getIn().getBody(String.class);
+      String messageJson = sanitizeJSONString(exchange.getIn().getBody(String.class));
 
       Gson gson = new Gson();
       UserMessage message = gson.fromJson(messageJson, UserMessage.class);

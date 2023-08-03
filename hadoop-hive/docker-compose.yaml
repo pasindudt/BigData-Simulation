@@ -99,16 +99,28 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
 
-  spark-app:
-    image: spark-app
-    container_name: spark-app
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+
+  ml-service:
+    image: ml-service
+    container_name: ml-service
+    ports:
+      - 8789:8789
+
+  spark-job:
+    image: spark-job
+    container_name: spark-job
     depends_on:
       - spark-master
       - spark-worker-1
+      - ml-service
     environment:
       SPARK_MASTER_NAME: spark-master
       SPARK_MASTER_PORT: 7077
-      SPARK_APPLICATION_ARGS: hdfs://namenode:9000/data/logs
+      SPARK_APPLICATION_ARGS: hdfs://namenode:9000/data/users hdfs://namenode:9000/data/categories hdfs://namenode:9000/data/movies hdfs://namenode:9000/data/logs hdfs://namenode:9000/data/error_logs hdfs://namenode:9000/data/reviews http://ml-service:8789/sentiment
 
   camel-integration:
     container_name: camel-integration

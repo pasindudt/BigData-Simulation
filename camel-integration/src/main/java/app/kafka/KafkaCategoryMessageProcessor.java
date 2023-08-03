@@ -8,12 +8,13 @@ import static app.kafka.Constants.HDFS_CATEGORY_OPTIONS;
 import static app.kafka.Constants.HDFS_CATEGORY_URL;
 
 import static app.util.TextProcessor.sanitizeStringWithReplace;
+import static app.util.TextProcessor.sanitizeJSONString;
 
 public class KafkaCategoryMessageProcessor implements Processor {
    @Override
    public void process(Exchange exchange){
 
-      String messageJson = exchange.getIn().getBody(String.class);
+      String messageJson = sanitizeJSONString(exchange.getIn().getBody(String.class));
 
       Gson gson = new Gson();
       CategoryMessage message = gson.fromJson(messageJson, CategoryMessage.class);

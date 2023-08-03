@@ -28,12 +28,21 @@ public class LogDataToHdfsRoute extends RouteBuilder {
                                 .end();
 
                 from("file:/output/?fileName=info.log")
-                                .log("picked up from output dir")
+                                .log("picked up info log from output dir")
                                 .aggregate(constant(true), new LogFileAggregationStrategy())
-                                .log("aggregration")
+                                .log("info log aggregation")
                                 .completionSize(HDFS_COMPLETION_SIZE)
 //                                .completionTimeout(5000)
-                                .process(new LogHDFSFileProcessor())
-                                .log("Uploaded to HDFS");
+                                .process(new LogInfoHDFSFileProcessor())
+                                .log("Info Logs uploaded to HDFS");
+
+                from("file:/output/?fileName=error.log")
+                        .log("picked up error log from output dir")
+                        .aggregate(constant(true), new LogFileAggregationStrategy())
+                        .log("error log aggregation")
+                        .completionSize(HDFS_COMPLETION_SIZE)
+//                                .completionTimeout(5000)
+                        .process(new LogErrorHDFSFileProcessor())
+                        .log("Error logs uploaded to HDFS");
         }
 }

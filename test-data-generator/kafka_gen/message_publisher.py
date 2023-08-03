@@ -1,7 +1,7 @@
+import json
 from datetime import datetime, timedelta
 
 from kafka import KafkaProducer
-import json
 import random
 
 used_usernames = set()
@@ -16,28 +16,33 @@ last_names_array = []
 movies_array = []
 categories_array = []
 
+
+def sanitize_string(input_string):
+    return input_string.replace("\n", "")
+
+
 with open(first_names_file_path, 'r') as file:
     lines = file.readlines()
     for line in lines:
-        first_names_array.append(line)
+        first_names_array.append(sanitize_string(line))
 
 with open(last_names_file_path, 'r') as file:
     lines = file.readlines()
     for line in lines:
-        last_names_array.append(line)
+        last_names_array.append(sanitize_string(line))
 
 with open(movies_file_path, 'r') as file:
     lines = file.readlines()
     for line in lines:
-        movie = line.split('|')[0].strip()
-        genre = line.split('|')[1].strip()
+        movie = sanitize_string(line.split('|')[0].strip())
+        genre = sanitize_string(line.split('|')[1].strip())
         movies_array.append((movie, genre))
 
 with open(categories_file_path, 'r') as file:
     lines = file.readlines()
     for line in lines:
-        cat_id = line.split('|')[0].strip()
-        cat_name = line.split('|')[1].strip()
+        cat_id = sanitize_string(line.split('|')[0].strip())
+        cat_name = sanitize_string(line.split('|')[1].strip())
         categories_array.append((cat_id, cat_name))
 
 
@@ -78,7 +83,7 @@ def generate_user_message(action, user_id_gen):
     message["data"]["username"] = generate_username()
     message["data"]["email"] = f'{message["data"]["username"]}@example.com'
 
-    return json.dumps(message)
+    return json.dumps(message, ensure_ascii=False)
 
 
 def generate_movie_message(action, movie_id_gen):
@@ -88,12 +93,12 @@ def generate_movie_message(action, movie_id_gen):
         "data": {}
     }
     message["data"]["movie_id"] = generate_movie_id(movie_id_gen)
-    movie_name, category = movies_array[movie_id_gen.counter-1]
+    movie_name, category = movies_array[movie_id_gen.counter]
     message["data"]["title"] = movie_name
     message["data"]["release_date"] = generate_random_date("1930-01-01", "2023-01-01")
     message["data"]["category"] = category
 
-    return json.dumps(message)
+    return json.dumps(message, ensure_ascii=False)
 
 
 def generate_category_message(action, _cat_id, _name):
@@ -105,7 +110,7 @@ def generate_category_message(action, _cat_id, _name):
     message["data"]["category_id"] = _cat_id
     message["data"]["name"] = _name
 
-    return json.dumps(message)
+    return json.dumps(message, ensure_ascii=False)
 
 
 def publish_to_kafka(bootstrap_servers_url, topic_name, message):
@@ -113,7 +118,7 @@ def publish_to_kafka(bootstrap_servers_url, topic_name, message):
         bootstrap_servers=bootstrap_servers_url,
         value_serializer=lambda v: json.dumps(v).encode('utf-8')
     )
-    producer.send(topic_name, value=json.loads(message))
+    producer.send(topic_name, value=message)
 
     producer.flush()
     producer.close()
