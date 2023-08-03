@@ -99,6 +99,11 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
 
+  mongo:
+    image: mongo:latest
+    ports:
+      - 27017:27017
+
   spark-app:
     image: spark-app
     container_name: spark-app
