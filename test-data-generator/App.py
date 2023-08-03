@@ -27,7 +27,7 @@ def data_load_kafka_create_topic():
 def init_data_load_kafka():
     try:
         init_category_load(bootstrap_servers)
-        init_movie_load(100, movie_id_gen, bootstrap_servers)
+        init_movie_load(99, movie_id_gen, bootstrap_servers)
         init_user_load(1000, user_id_gen, bootstrap_servers)
         return jsonify({'message': 'Init Kafka Data load initialized'}), 200
     except Exception as e:

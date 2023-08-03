@@ -1,1 +1,1 @@
-docker build . -t "spark-app"
+docker build . -t "spark-job"

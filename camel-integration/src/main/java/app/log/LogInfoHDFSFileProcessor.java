@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-public class LogHDFSFileProcessor implements Processor {
+public class LogInfoHDFSFileProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
